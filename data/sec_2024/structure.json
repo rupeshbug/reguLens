@@ -1,0 +1,300 @@
+{
+  "document_id": "SEC_Climate_Final_2024",
+  "version": "2024_final",
+  "sections": [
+    {
+      "id": "I",
+      "title": "Introduction",
+      "page": 10,
+      "children": [
+        {
+          "id": "I.A",
+          "title": "Need for Enhanced and Standardized Climate-Related Disclosures",
+          "page": 19
+        },
+        {
+          "id": "I.B",
+          "title": "Summary of the Final Rules",
+          "page": 24,
+          "children": [
+            {
+              "id": "I.B.1",
+              "title": "Content of the Climate-Related Disclosures",
+              "page": 26
+            },
+            {
+              "id": "I.B.2",
+              "title": "Presentation and Submission of the Climate-Related Disclosures",
+              "page": 33
+            },
+            {
+              "id": "I.B.3",
+              "title": "Safe Harbor for Certain Climate-Related Disclosures",
+              "page": 35
+            },
+            {
+              "id": "I.B.4",
+              "title": "Phase In Periods",
+              "page": 35
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "II",
+      "title": "Discussion",
+      "page": 36,
+      "children": [
+        {
+          "id": "II.A",
+          "title": "Overview and Purpose of the Climate-Related Disclosure Rules",
+          "page": 36,
+          "children": [
+            {
+              "id": "II.A.1",
+              "title": "Proposed Rules",
+              "page": 36,
+              "children": [
+                {
+                  "id": "II.A.1.a",
+                  "title": "Consistent, Comparable, and Reliable Disclosures for Investors",
+                  "page": 36
+                },
+                {
+                  "id": "II.A.1.b",
+                  "title": "Proposed Location of the Disclosure",
+                  "page": 37
+                }
+              ]
+            },
+            {
+              "id": "II.A.2",
+              "title": "Comments",
+              "page": 38
+            },
+            {
+              "id": "II.A.3",
+              "title": "Final Rules",
+              "page": 46
+            }
+          ]
+        },
+
+        {
+          "id": "II.B",
+          "title": "Commission Authority to Adopt Disclosure Rules",
+          "page": 59
+        },
+
+        {
+          "id": "II.C",
+          "title": "Disclosure of Climate-Related Risks",
+          "page": 73,
+          "children": [
+            {
+              "id": "II.C.1",
+              "title": "Definitions of Climate-Related Risks and Climate-Related Opportunities",
+              "page": 73,
+              "children": [
+                { "id": "II.C.1.a", "title": "Proposed Rule", "page": 73 },
+                { "id": "II.C.1.b", "title": "Comments", "page": 77 },
+                { "id": "II.C.1.c", "title": "Final Rules", "page": 89 }
+              ]
+            },
+            {
+              "id": "II.C.2",
+              "title": "Time Horizons and the Materiality Determination",
+              "page": 100,
+              "children": [
+                { "id": "II.C.2.a", "title": "Proposed Rule", "page": 100 },
+                { "id": "II.C.2.b", "title": "Comments", "page": 101 },
+                { "id": "II.C.2.c", "title": "Final Rule", "page": 103 }
+              ]
+            }
+          ]
+        },
+
+        {
+          "id": "II.D",
+          "title": "Disclosure Regarding Impacts of Climate-Related Risks on Strategy, Business Model, and Outlook",
+          "page": 106,
+          "children": [
+            {
+              "id": "II.D.1",
+              "title": "Disclosure of Material Impacts",
+              "page": 106,
+              "children": [
+                { "id": "II.D.1.a", "title": "Proposed Rules", "page": 106 },
+                { "id": "II.D.1.b", "title": "Comments", "page": 109 },
+                { "id": "II.D.1.c", "title": "Final Rules", "page": 114 }
+              ]
+            },
+            {
+              "id": "II.D.2",
+              "title": "Transition Plan Disclosure",
+              "page": 125,
+              "children": [
+                { "id": "II.D.2.a", "title": "Proposed Rule", "page": 125 },
+                { "id": "II.D.2.b", "title": "Comments", "page": 127 },
+                { "id": "II.D.2.c", "title": "Final Rule", "page": 131 }
+              ]
+            },
+            {
+              "id": "II.D.3",
+              "title": "Disclosure of Scenario Analysis If Used",
+              "page": 140,
+              "children": [
+                { "id": "II.D.3.a", "title": "Proposed Rule", "page": 140 },
+                { "id": "II.D.3.b", "title": "Comments", "page": 141 },
+                { "id": "II.D.3.c", "title": "Final Rule", "page": 145 }
+              ]
+            },
+            {
+              "id": "II.D.4",
+              "title": "Disclosure of a Maintained Internal Carbon Price",
+              "page": 151,
+              "children": [
+                { "id": "II.D.4.a", "title": "Proposed Rule", "page": 151 },
+                { "id": "II.D.4.b", "title": "Comments", "page": 152 },
+                { "id": "II.D.4.c", "title": "Final Rule", "page": 156 }
+              ]
+            }
+          ]
+        },
+
+        {
+          "id": "II.E",
+          "title": "Governance Disclosure",
+          "page": 160,
+          "children": [
+            {
+              "id": "II.E.1",
+              "title": "Disclosure of Board Oversight",
+              "page": 160,
+              "children": [
+                { "id": "II.E.1.a", "title": "Proposed Rules", "page": 160 },
+                { "id": "II.E.1.b", "title": "Comments", "page": 162 },
+                { "id": "II.E.1.c", "title": "Final Rule", "page": 168 }
+              ]
+            },
+            {
+              "id": "II.E.2",
+              "title": "Disclosure of Management Oversight",
+              "page": 172,
+              "children": [
+                { "id": "II.E.2.a", "title": "Proposed Rules", "page": 172 },
+                { "id": "II.E.2.b", "title": "Comments", "page": 173 },
+                { "id": "II.E.2.c", "title": "Final Rule", "page": 179 }
+              ]
+            }
+          ]
+        },
+
+        {
+          "id": "II.F",
+          "title": "Risk Management Disclosure",
+          "page": 184,
+          "children": [
+            { "id": "II.F.1", "title": "Proposed Rule", "page": 184 },
+            { "id": "II.F.2", "title": "Comments", "page": 186 },
+            { "id": "II.F.3", "title": "Final Rule", "page": 192 }
+          ]
+        },
+
+        {
+          "id": "II.G",
+          "title": "Targets and Goals Disclosure",
+          "page": 199,
+          "children": [
+            { "id": "II.G.1", "title": "Proposed Rule", "page": 199 },
+            {
+              "id": "II.G.2",
+              "title": "Comments",
+              "page": 201,
+              "children": [
+                {
+                  "id": "II.G.2.a",
+                  "title": "Overall Proposed Disclosure Requirements",
+                  "page": 201
+                },
+                {
+                  "id": "II.G.2.b",
+                  "title": "Use of Carbon Offsets or Renewable Energy Credits",
+                  "page": 206
+                }
+              ]
+            },
+            {
+              "id": "II.G.3",
+              "title": "Final Rule",
+              "page": 210,
+              "children": [
+                {
+                  "id": "II.G.3.a",
+                  "title": "Overall Disclosure Requirement",
+                  "page": 210
+                },
+                {
+                  "id": "II.G.3.b",
+                  "title": "Carbon Offsets and RECs Disclosure Requirement",
+                  "page": 218
+                }
+              ]
+            }
+          ]
+        },
+
+        {
+          "id": "II.H",
+          "title": "GHG Emissions Disclosure",
+          "page": 222
+        },
+
+        {
+          "id": "II.I",
+          "title": "Attestation Over GHG Emissions Disclosure",
+          "page": 261
+        },
+
+        {
+          "id": "II.J",
+          "title": "Safe Harbor for Certain Climate-Related Disclosures",
+          "page": 386
+        },
+        { "id": "II.K", "title": "Financial Statement Effects", "page": 401 },
+        {
+          "id": "II.L",
+          "title": "Registrants Subject to the Climate-Related Disclosure Rules and Affected Forms",
+          "page": 549
+        },
+        { "id": "II.M", "title": "Structured Data Requirement", "page": 574 },
+        {
+          "id": "II.N",
+          "title": "Treatment for Purposes of the Securities Act and the Exchange Act",
+          "page": 580
+        },
+        { "id": "II.O", "title": "Compliance Date", "page": 584 }
+      ]
+    },
+
+    { "id": "III", "title": "Other Matters", "page": 591 },
+
+    {
+      "id": "IV",
+      "title": "Economic Analysis",
+      "page": 592
+    },
+
+    { "id": "V", "title": "Paperwork Reduction Act", "page": 806 },
+
+    {
+      "id": "VI",
+      "title": "Final Regulatory Flexibility Act Analysis",
+      "page": 828
+    },
+
+    { "id": "VII", "title": "Statutory Authority", "page": 841 }
+  ]
+}

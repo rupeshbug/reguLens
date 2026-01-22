@@ -1,0 +1,493 @@
+{
+  "document_id": "SEC_Climate_Proposed_2022",
+  "version": "2022_proposed",
+  "sections": [
+    {
+      "id": "I",
+      "title": "Introduction",
+      "page": 7,
+      "children": [
+        { "id": "I.A", "title": "Background", "page": 15 },
+        {
+          "id": "I.B",
+          "title": "The March 2021 Request for Public Input",
+          "page": 18
+        },
+        {
+          "id": "I.C",
+          "title": "The Growing Investor Demand for Climate-Related Risk Disclosure and Related Information",
+          "page": 24,
+          "children": [
+            {
+              "id": "I.C.1",
+              "title": "Major Investor Climate-Related Initiatives",
+              "page": 24
+            },
+            {
+              "id": "I.C.2",
+              "title": "Third-Party Data, Voluntary Disclosure Frameworks, and International Disclosure Initiatives",
+              "page": 28
+            }
+          ]
+        },
+        {
+          "id": "I.D",
+          "title": "Development of a Climate-Related Reporting Framework",
+          "page": 34,
+          "children": [
+            {
+              "id": "I.D.1",
+              "title": "The Task Force on Climate-Related Financial Disclosure",
+              "page": 34
+            },
+            {
+              "id": "I.D.2",
+              "title": "The Greenhouse Gas Protocol",
+              "page": 37
+            }
+          ]
+        },
+        {
+          "id": "I.E",
+          "title": "Summary of the Proposed Rules",
+          "page": 40,
+          "children": [
+            {
+              "id": "I.E.1",
+              "title": "Content of the Proposed Disclosures",
+              "page": 41
+            },
+            {
+              "id": "I.E.2",
+              "title": "Presentation of the Proposed Disclosures",
+              "page": 43
+            },
+            {
+              "id": "I.E.3",
+              "title": "Attestation for Scope 1 and Scope 2 Emissions Disclosure",
+              "page": 44
+            },
+            {
+              "id": "I.E.4",
+              "title": "Phase-In Periods and Accommodations for the Proposed Disclosures",
+              "page": 45
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      "id": "II",
+      "title": "Discussion",
+      "page": 46,
+      "children": [
+        {
+          "id": "II.A",
+          "title": "Overview of the Climate-Related Disclosure Framework",
+          "page": 46,
+          "children": [
+            {
+              "id": "II.A.1",
+              "title": "Proposed TCFD-Based Disclosure Framework",
+              "page": 46
+            },
+            {
+              "id": "II.A.2",
+              "title": "Location of the Climate-Related Disclosure",
+              "page": 50
+            }
+          ]
+        },
+        {
+          "id": "II.B",
+          "title": "Disclosure of Climate-Related Risks",
+          "page": 55,
+          "children": [
+            {
+              "id": "II.B.1",
+              "title": "Definitions of Climate-Related Risks and Climate-Related Opportunities",
+              "page": 56
+            },
+            {
+              "id": "II.B.2",
+              "title": "Proposed Time Horizons and the Materiality Determination",
+              "page": 63
+            }
+          ]
+        },
+        {
+          "id": "II.C",
+          "title": "Disclosure Regarding Climate-Related Impacts on Strategy, Business Model, and Outlook",
+          "page": 72,
+          "children": [
+            {
+              "id": "II.C.1",
+              "title": "Disclosure of Material Impacts",
+              "page": 72
+            },
+            {
+              "id": "II.C.2",
+              "title": "Disclosure of Carbon Offsets or Renewable Energy Credits If Used",
+              "page": 77
+            },
+            {
+              "id": "II.C.3",
+              "title": "Disclosure of a Maintained Internal Carbon Price",
+              "page": 79
+            },
+            {
+              "id": "II.C.4",
+              "title": "Disclosure of Scenario Analysis, if Used",
+              "page": 83
+            }
+          ]
+        },
+        {
+          "id": "II.D",
+          "title": "Governance Disclosure",
+          "page": 93,
+          "children": [
+            { "id": "II.D.1", "title": "Board Oversight", "page": 94 },
+            { "id": "II.D.2", "title": "Management Oversight", "page": 96 }
+          ]
+        },
+        {
+          "id": "II.E",
+          "title": "Risk Management Disclosure",
+          "page": 100,
+          "children": [
+            {
+              "id": "II.E.1",
+              "title": "Disclosure of Processes for Identifying, Assessing, and Managing Climate-Related Risks",
+              "page": 100
+            },
+            {
+              "id": "II.E.2",
+              "title": "Transition Plan Disclosure",
+              "page": 102
+            }
+          ]
+        },
+        {
+          "id": "II.F",
+          "title": "Financial Statement Metrics",
+          "page": 110,
+          "children": [
+            { "id": "II.F.1", "title": "Overview", "page": 110 },
+            {
+              "id": "II.F.2",
+              "title": "Financial Impact Metrics",
+              "page": 116
+            },
+            { "id": "II.F.3", "title": "Expenditure Metrics", "page": 132 },
+            {
+              "id": "II.F.4",
+              "title": "Financial Estimates and Assumptions",
+              "page": 139
+            },
+            {
+              "id": "II.F.5",
+              "title": "Inclusion of Climate-Related Metrics in the Financial Statements",
+              "page": 144
+            }
+          ]
+        },
+        {
+          "id": "II.G",
+          "title": "GHG Emissions Metrics Disclosure",
+          "page": 147,
+          "children": [
+            {
+              "id": "II.G.1",
+              "title": "GHG Emissions Disclosure Requirement",
+              "page": 147
+            },
+            {
+              "id": "II.G.2",
+              "title": "GHG Emissions Methodology and Related Instructions",
+              "page": 185
+            },
+            {
+              "id": "II.G.3",
+              "title": "The Scope 3 Emissions Disclosure Safe Harbor and Other Accommodations",
+              "page": 208
+            }
+          ]
+        },
+        {
+          "id": "II.H",
+          "title": "Attestation of Scope 1 and Scope 2 Emissions Disclosure",
+          "page": 215,
+          "children": [
+            { "id": "II.H.1", "title": "Overview", "page": 215 },
+            {
+              "id": "II.H.2",
+              "title": "GHG Emissions Attestation Provider Requirements",
+              "page": 239
+            },
+            {
+              "id": "II.H.3",
+              "title": "GHG Emissions Attestation Engagement and Report Requirements",
+              "page": 247
+            },
+            {
+              "id": "II.H.4",
+              "title": "Additional Disclosure by the Registrant",
+              "page": 260
+            },
+            {
+              "id": "II.H.5",
+              "title": "Disclosure of Voluntary Attestation",
+              "page": 263
+            }
+          ]
+        },
+        { "id": "II.I", "title": "Targets and Goals Disclosure", "page": 266 },
+        {
+          "id": "II.J",
+          "title": "Registrants Subject to the Climate-Related Disclosure Rules and Affected Forms",
+          "page": 275
+        },
+        {
+          "id": "II.K",
+          "title": "Structured Data Requirement",
+          "page": 283
+        },
+        {
+          "id": "II.L",
+          "title": "Treatment for Purposes of Securities Act and Exchange Act",
+          "page": 286
+        },
+        { "id": "II.M", "title": "Compliance Date", "page": 289 }
+      ]
+    },
+
+    { "id": "III", "title": "General Request for Comments", "page": 292 },
+
+    {
+      "id": "IV",
+      "title": "Economic Analysis",
+      "page": 293,
+      "children": [
+        {
+          "id": "IV.A",
+          "title": "Baseline and Affected Parties",
+          "page": 294,
+          "children": [
+            { "id": "IV.A.1", "title": "Affected Parties", "page": 295 },
+            {
+              "id": "IV.A.2",
+              "title": "Current Regulatory Framework",
+              "page": 296
+            },
+            {
+              "id": "IV.A.3",
+              "title": "Existing State and Federal Laws",
+              "page": 296
+            },
+            {
+              "id": "IV.A.4",
+              "title": "International Disclosure Requirements",
+              "page": 299
+            },
+            {
+              "id": "IV.A.5",
+              "title": "Current Market Practices",
+              "page": 302
+            }
+          ]
+        },
+        {
+          "id": "IV.B",
+          "title": "Broad Economic Considerations",
+          "page": 319,
+          "children": [
+            {
+              "id": "IV.B.1",
+              "title": "Investors’ Demand for Climate Information",
+              "page": 319
+            },
+            {
+              "id": "IV.B.2",
+              "title": "Impediments to Voluntary Climate-Related Disclosures",
+              "page": 322
+            },
+            {
+              "id": "IV.B.2.b",
+              "title": "Climate-Specific Factors that Exacerbate Impediments to Voluntary Disclosure",
+              "page": 327
+            }
+          ]
+        },
+        {
+          "id": "IV.C",
+          "title": "Benefits and Costs",
+          "page": 333,
+          "children": [
+            { "id": "IV.C.1", "title": "Benefits", "page": 334 },
+            { "id": "IV.C.2", "title": "Costs", "page": 371 }
+          ]
+        },
+        {
+          "id": "IV.D",
+          "title": "Anticipated Effects on Efficiency, Competition, and Capital Formation",
+          "page": 392,
+          "children": [
+            { "id": "IV.D.1", "title": "Efficiency", "page": 392 },
+            { "id": "IV.D.2", "title": "Competition", "page": 397 },
+            {
+              "id": "IV.D.3",
+              "title": "Capital Formation",
+              "page": 399
+            }
+          ]
+        },
+        { "id": "IV.E", "title": "Other Economic Effects", "page": 401 },
+        {
+          "id": "IV.F",
+          "title": "Reasonable Alternatives",
+          "page": 405,
+          "children": [
+            {
+              "id": "IV.F.1",
+              "title": "Requirements Limited to Only Certain Classes of Filers",
+              "page": 405
+            },
+            {
+              "id": "IV.F.2",
+              "title": "Require Scenario Analysis",
+              "page": 406
+            },
+            {
+              "id": "IV.F.3",
+              "title": "Require Specific External Protocol for GHG Emissions Disclosure",
+              "page": 407
+            },
+            {
+              "id": "IV.F.4",
+              "title": "Permit GHG Emissions Disclosures to be Furnished Instead of Filed",
+              "page": 409
+            },
+            {
+              "id": "IV.F.5",
+              "title": "Do Not Require Scope 3 Emissions for Registrants with a Target or Goal Related to Scope 3",
+              "page": 409
+            },
+            {
+              "id": "IV.F.6",
+              "title": "Exempt EGCs from Scope 3 Emissions Disclosure Requirements",
+              "page": 410
+            },
+            {
+              "id": "IV.F.7",
+              "title": "Eliminate Exemption for SRCs from Scope 3 Reporting",
+              "page": 411
+            },
+            {
+              "id": "IV.F.8",
+              "title": "Remove Safe Harbor for Scope 3 Emissions Disclosures",
+              "page": 411
+            },
+            {
+              "id": "IV.F.9",
+              "title": "Require Management Assessment and Attestation of GHG Controls",
+              "page": 411
+            },
+            {
+              "id": "IV.F.10",
+              "title": "Require Reasonable Assurance for Scope 1 and Scope 2 Emissions Disclosures",
+              "page": 414
+            },
+            {
+              "id": "IV.F.11",
+              "title": "Require Limited Assurance for Certain Filers",
+              "page": 414
+            },
+            {
+              "id": "IV.F.12",
+              "title": "Require Disclosure of Any Assurance Obtained Over GHG Emissions",
+              "page": 415
+            },
+            {
+              "id": "IV.F.13",
+              "title": "Permit Host Country Disclosure Frameworks",
+              "page": 416
+            },
+            {
+              "id": "IV.F.14",
+              "title": "Alternative Tagging Requirements",
+              "page": 417
+            }
+          ]
+        },
+        { "id": "IV.G", "title": "Request for Comment", "page": 418 }
+      ]
+    },
+
+    {
+      "id": "V",
+      "title": "Paperwork Reduction Act",
+      "page": 420,
+      "children": [
+        {
+          "id": "V.A",
+          "title": "Summary of the Collections of Information",
+          "page": 420
+        },
+        {
+          "id": "V.B",
+          "title": "Summary of the Proposed Amendments’ Effects on the Collections of Information",
+          "page": 422
+        },
+        {
+          "id": "V.C",
+          "title": "Incremental and Aggregate Burden and Cost Estimates",
+          "page": 437
+        },
+        { "id": "V.D", "title": "Request for Comment", "page": 442 }
+      ]
+    },
+
+    {
+      "id": "VI",
+      "title": "Initial Regulatory Flexibility Act Analysis",
+      "page": 443,
+      "children": [
+        {
+          "id": "VI.A",
+          "title": "Reasons for, and Objectives of, the Proposed Action",
+          "page": 443
+        },
+        { "id": "VI.B", "title": "Legal Basis", "page": 444 },
+        {
+          "id": "VI.C",
+          "title": "Small Entities Subject to the Proposed Rules",
+          "page": 444
+        },
+        {
+          "id": "VI.D",
+          "title": "Reporting, Recordkeeping, and Other Compliance Requirements",
+          "page": 445
+        },
+        {
+          "id": "VI.E",
+          "title": "Duplicative, Overlapping, or Conflicting Federal Rules",
+          "page": 446
+        },
+        {
+          "id": "VI.F",
+          "title": "Significant Alternatives",
+          "page": 447
+        }
+      ]
+    },
+
+    {
+      "id": "VII",
+      "title": "Small Business Regulatory Enforcement Fairness Act",
+      "page": 449
+    },
+    { "id": "VIII", "title": "Statutory Authority", "page": 450 }
+  ]
+}
