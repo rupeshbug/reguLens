@@ -171,3 +171,11 @@ It is a **compliance‑grade retrieval and reasoning pipeline** built with:
 - Clear separation of ingestion, retrieval, reranking, and generation
 
 In ReguLens, refusing to answer is not a weakness — it is a core feature.
+
+### Ablation Test: Version-Aware Retrieval
+
+To evaluate the effect of metadata filtering on retrieval and answer generation, we conducted an ablation test using the same query under three conditions: (1) no version filter, (2) retrieval restricted to the 2024 final rule, and (3) retrieval restricted to the 2022 proposed rule. The goal was to verify whether constraining retrieval by document version causally affects the evidence retrieved and the resulting answer.
+
+The results show clear behavioral differences across conditions. Without filtering, the system produces a blended response drawing from both the proposed and final rule rationales. When restricted to the 2024 final rule, the answer reflects the SEC’s finalized position, emphasizing investor pricing efficiency, materiality, and final regulatory justifications. When restricted to the 2022 proposed rule, the answer shifts toward consultation-stage reasoning, focusing on inconsistent voluntary disclosures and the need for investor protection through standardized reporting.
+
+In the final run, retrieved sources fully aligned with the specified version constraints, confirming that metadata-aware retrieval is correctly enforced. This demonstrates that retrieval configuration meaningfully influences both evidence selection and model reasoning, validating the effectiveness of version-aware RAG and highlighting the importance of retriever design in regulatory QA systems.

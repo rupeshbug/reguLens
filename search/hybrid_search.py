@@ -9,7 +9,7 @@ from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Prefetch, FusionQuery, Fusion
+from qdrant_client.models import Prefetch, FusionQuery, Fusion, Filter, FieldCondition, MatchValue
 
 from ingest.reranker import CrossEncoderReranker
 
@@ -97,7 +97,20 @@ def hybrid_search(
     top_k: int = TOP_K,
     rerank_k: int = RERANK_TOP_K ,
     return_payload: bool = True,
+    version_filter: str | None = None
 ):
+    
+    qdrant_filter = None
+
+    if version_filter:
+        qdrant_filter = Filter(
+            must=[
+                FieldCondition(
+                    key="version",
+                    match=MatchValue(value=version_filter)
+            )
+        ]
+    )
 
     dense_query = dense_model.encode(
         query,
@@ -113,11 +126,13 @@ def hybrid_search(
                 using="dense",
                 query=dense_query,
                 limit=top_k,
+                filter=qdrant_filter
             ),
             Prefetch(
                 using="sparse",
                 query=sparse_query,
                 limit=top_k,
+                filter=qdrant_filter
             ),
         ],
         query = FusionQuery(fusion=Fusion.RRF),

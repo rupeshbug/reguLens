@@ -89,7 +89,8 @@ def build_user_prompt(query: str, contexts: List[Dict]) -> str:
 def answer_query(
     query: str,
     top_k: int = 10,
-    rerank_k: int = 3
+    rerank_k: int = 3,
+    version_filter: str | None = None
 ) -> Dict:
     """
     End-to-end RAG answer generation.
@@ -100,7 +101,8 @@ def answer_query(
         query = query,
         top_k = top_k,
         rerank_k = rerank_k,
-        return_payload = True
+        return_payload = True,
+        version_filter=version_filter
     )
 
     if not results:
@@ -169,16 +171,33 @@ def answer_query(
 # testing
 if __name__ == "__main__":
     query = (
-        "What are the specific changes in the 2024 version from previous one in 2022?"
+        "Why does the SEC believe climate-related disclosure is necessary for investors?"
     )
 
-    response = answer_query(query)
+    response1 = answer_query(query)
+    response2 = answer_query(query, version_filter="2024_final")
+    response3 = answer_query(query, version_filter="2022_proposed")
 
-    print("\n[ANSWER]\n")
-    print(response["answer"])
-
+    print("\n[ANSWER 1]\n")
+    print(response1["answer"])
     print("\n[SOURCES]\n")
-    for s in response["sources"]:
+    for s1 in response1["sources"]:
         print(
-            f"- {s['doc']} ({s['version']}) | Section: {s['section']}"
+            f"- {s1['doc']} ({s1['version']}) | Section: {s1['section']}"
         )
+    
+    print("\n[ANSWER 2]\n")
+    print(response2["answer"])
+    print("\n[SOURCES]\n")
+    for s2 in response2["sources"]:
+        print(
+            f"- {s2['doc']} ({s2['version']}) | Section: {s2['section']}"
+        )
+        
+    print("\n[ANSWER 3]\n")
+    print(response3["answer"])
+    for s3 in response3["sources"]:
+        print(
+            f"- {s3['doc']} ({s3['version']}) | Section: {s3['section']}"
+        )    
+    
