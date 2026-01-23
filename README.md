@@ -1,6 +1,6 @@
 # ReguLens
 
-ReguLens is a retrieval-augmented generation (RAG) system focused on U.S. SEC Climate‑Related Disclosure rules. It is designed to answer regulatory and investor‑facing questions using **only** official SEC source documents, with strong guarantees against hallucination.
+ReguLens is a retrieval-augmented generation (RAG) system focused on U.S. SEC Climate‑Related Disclosure rules. It is designed to answer regulatory and investor‑facing questions using **only** official SEC source documents, with strong focus to prevent hallucination.
 
 The system currently supports:
 - The **2022 SEC Climate‑Related Disclosure Proposed Rule**
@@ -46,19 +46,6 @@ This makes ReguLens suitable for:
 
 ---
 
-## How to Run (High Level)
-
-1. Ingest and index documents into Qdrant
-2. Run hybrid retrieval and reranking
-3. Generate grounded answers using the LLM
-
-Environment variables (via `.env`):
-```
-GROQ_API_KEY=your_api_key_here
-```
-
----
-
 ## Design Philosophy
 
 ReguLens intentionally avoids heavy RAG orchestration frameworks in favor of:
@@ -69,16 +56,3 @@ ReguLens intentionally avoids heavy RAG orchestration frameworks in favor of:
 This makes the system easier to audit, extend, and productionize.
 
 ---
-
-## Status
-
-Current stage:
-- Retrieval ✅
-- Reranking ✅
-- End‑to‑end RAG answering ✅
-
-Next planned stages:
-- Evaluation (RAGAS)
-- API layer
-- Frontend integration
-
