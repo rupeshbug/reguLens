@@ -1,161 +1,173 @@
 # ReguLens – Internal Project Notes
 
-This document explains **what was built, why it was built, and the reasoning behind key design decisions**. It is intended as a long‑term memory aid and as a narrative to be used when explaining the project to others.
+This document captures the **story of ReguLens**: what problem we set out to solve, the concrete engineering decisions we made along the way, the tradeoffs we accepted, and how the system is evolving. It is meant both as a long‑term memory aid and as a narrative to clearly explain the project end‑to‑end.
 
 ---
 
 ## 1. Problem Definition
 
-Regulatory documents are:
-- Long
-- Highly structured
-- Easy to misinterpret when summarized loosely
+Regulatory documents such as SEC rules are fundamentally different from typical knowledge sources. They are long, highly structured, legally precise, and versioned over time. Small wording changes can materially affect interpretation.
 
-Generic LLMs often:
-- Hallucinate regulatory intent
-- Mix proposed and final rules
-- Answer confidently without sufficient grounding
+In early experiments, generic LLMs showed predictable failure modes:
+- Hallucinating regulatory intent
+- Mixing proposed rules with finalized rules
+- Answering confidently even when evidence was missing
 
-**Goal:** Build a system that answers regulatory questions *only* from official SEC text, with strong guarantees of correctness and traceability.
+The core problem, therefore, was **not language generation**, but **trustworthy retrieval and grounding**.
+
+**Goal:** Build a system that answers regulatory questions *only* from official SEC climate‑related disclosure documents, with strong guarantees around correctness, traceability, and refusal when evidence is insufficient.
 
 ---
 
 ## 2. Why Retrieval‑Augmented Generation (RAG)
 
-Pure LLM answers are unacceptable for compliance use cases.
+Pure LLM answers are unacceptable for compliance and regulatory use cases. Even strong models tend to generalize, interpolate, or guess when faced with incomplete information.
 
-RAG ensures:
-- Answers are grounded in official documents
-- The model cannot exceed its evidence
-- Missing context is detected and acknowledged
-
----
-
-## 3. Why Hybrid Search (Dense + Sparse)
-
-### Dense Search (Embeddings)
-- Captures semantic similarity
-- Handles paraphrased questions
-- Weak at exact regulatory phrasing
-
-### Sparse Search (SPLADE)
-- Preserves legal and regulatory terminology
-- Handles exact keyword matching
-- Weak at semantic generalization
-
-### Why Both
-
-SEC questions often mix:
-- Conceptual phrasing ("why does the SEC believe…")
-- Legal language ("disclosure requirements", "investors")
-
-Hybrid search gives robustness across both dimensions.
+RAG was chosen because it:
+- Grounds every answer in source text
+- Makes the system evidence‑limited by design
+- Allows explicit detection of missing context
 
 ---
 
-## 4. Why Reciprocal Rank Fusion (RRF)
+## 3. Ingestion Strategy: Chunking & Metadata (What Happens Before Search)
 
-RRF:
-- Does not require score normalization
+A major early challenge was realizing that **retrieval quality is largely determined at ingestion time**.
+
+### Structural Normalization & Cross-Referencing
+The source documents frequently reference other parts of the rule using informal citations (e.g., “see infra Section I.C.2”) without machine-readable structure.
+
+To address this, ReguLens introduces a normalized structural layer during ingestion:
+
+- A custom structure.json maps conceptual sections and subsections
+- Cross-references are resolved against this normalized structure
+- Chunks are associated with logical sections, not just raw text offsets
+
+This enables:
+
+- More reliable retrieval across conceptually linked passages
+- Future version-aware comparison (2022 vs 2024) at the section level
+- Clearer traceability when explaining answers
+
+### Chunking
+SEC climate disclosure rules are not cleanly structured documents.
+They contain long narrative paragraphs, conceptual sections, frequent cross-references (e.g., “See infra Section I.C.2”), and inconsistent structural markers.
+
+Because of this, ReguLens does not rely on naive fixed-size chunking or literal section headers.
+
+Instead, the ingestion pipeline performs section-aware semantic chunking, built on top of:
+
+- Paragraph-aware chunk boundaries to preserve legal and conceptual coherence
+- A soft maximum length constraint (≈1500 characters)
+- A tolerance window (≈200 characters) to avoid unnecessary fragmentation when a paragraph slightly exceeds the limit
+
+This approach:
+
+- Preserves regulatory reasoning ensures passages remain interpretable in isolation
+- Avoids breaking sentences or legal arguments mid-thought
+- Produces chunks that align with how the SEC argues, not how the PDF is formatted
+
+The result is fewer but higher-quality chunks, which directly improves retrieval precision and downstream generation.
+
+### Metadata
+Each chunk is enriched with structured metadata, including:
+- Rule version (2022 proposed vs 2024 final)
+- Section / subsection identifiers
+- Document source
+
+This metadata enables:
+- Fast filtering during retrieval
+- Version‑aware prioritization
+- Cleaner, more auditable answers
+
+These ingestion decisions significantly improved both **accuracy and retrieval latency**.
+
+---
+
+## 4. Retrieval Stage: Why Hybrid Search
+
+No single retrieval method was sufficient for SEC‑style text.
+
+### Dense Retrieval (Embeddings)
+Dense search captures semantic similarity and handles paraphrased or conceptual questions well. However, it struggles with exact legal phrasing and specific terminology.
+
+### Sparse Retrieval (SPLADE)
+Sparse retrieval preserves regulatory and legal language, making it strong for exact keyword and phrase matching. Its weakness lies in semantic generalization.
+
+### Why Hybrid
+Real regulatory questions often mix both styles, for example:
+- Conceptual intent ("why does the SEC require…")
+- Precise legal wording ("disclosure requirements", "material risk")
+
+Using both dense and sparse retrieval provides robustness across these dimensions.
+
+---
+
+## 5. Why Reciprocal Rank Fusion (RRF)
+
+Once multiple retrievers are involved, their results must be combined reliably.
+
+RRF was chosen because it:
+- Does not depend on score calibration
 - Is robust when retrievers disagree
-- Is production‑proven in IR systems
+- Is simple, transparent, and production‑proven
 
-This makes it ideal for combining dense and sparse retrievers.
-
----
-
-## 5. Why Cross‑Encoder Reranking
-
-Vector similarity ≠ answer relevance.
-
-Reranking:
-- Scores query–passage pairs jointly
-- Dramatically improves top‑k quality
-- Reduces irrelevant but semantically close chunks
-
-This is critical before sending context to the LLM.
+RRF allows ReguLens to merge dense and sparse results into a single high‑quality candidate set without introducing fragile heuristics.
 
 ---
 
-## 6. Why No LangChain / LlamaIndex
+## 6. Reranking: Why Cross‑Encoders
 
-This was a **deliberate choice**.
+Initial retrieval only identifies *candidates*. It does not guarantee that the top results are the most answer‑relevant.
 
-Reasons:
-- Full control over retrieval logic
-- Easier debugging and inspection
-- No hidden prompt manipulation
-- Better suitability for regulated domains
+A cross‑encoder reranker is used to:
+- Jointly score query–passage pairs
+- Push truly relevant chunks to the top
+- Filter out semantically close but contextually irrelevant text
 
-Frameworks are helpful for speed, but risky for compliance‑grade systems.
+This reranking step proved critical before passing context to the LLM and noticeably improved answer coherence.
 
 ---
 
 ## 7. Prompt Design Philosophy
 
-The system prompt enforces:
-- Scope limitation (SEC climate rules only)
-- Preference for final rules (2024 > 2022)
-- Explicit refusal when context is insufficient
+Prompting is treated as a **control mechanism**, not a creativity tool.
 
-The user prompt:
+The system prompt enforces:
+- Strict domain scope (SEC climate rules only)
+- Preference for final rules over proposed rules
+- Explicit refusal when evidence is insufficient
+
+The user‑level prompt:
 - Injects retrieved passages verbatim
 - Forbids external knowledge
-- Encourages coherence across sections
+- Encourages synthesis *only when supported*
+
+The model is intentionally constrained to behave more like a compliance analyst than a conversational assistant.
 
 ---
 
-## 8. Observed Behavior (Important)
+## 8. Key Challenges Faced
 
-### Good Behavior
-- Correctly prefers 2024 Final Rule
-- Refuses to hallucinate differences when context is missing
-- Combines sections coherently when evidence exists
+Some challenges that materially influenced the design:
+- Mixing of proposed vs final rule content in early retrieval
+- Over‑retrieval of semantically similar but irrelevant sections
+- LLM tendency to over‑generalize when context was thin
 
-### Example
-Question:
-"What are the specific changes in the 2024 version from the previous one?"
-
-Result:
-- Model explicitly stated that context was insufficient
-- This is **correct behavior**, not a failure
+These issues directly led to:
+- Metadata‑aware filtering
+- Strong reranking
+- Explicit refusal logic
 
 ---
 
-## 9. Current Limitations
+## 9. Key Takeaway
 
-- No explicit diff‑aware retrieval yet
-- Comparison questions require targeted chunking
-- No automated evaluation metrics yet
+ReguLens is not a demo RAG system.
 
-These are **known and intentional tradeoffs** at this stage.
-
----
-
-## 10. Next Planned Stages
-
-1. **Evaluation**
-   - RAGAS (faithfulness, context precision, recall)
-
-2. **API Layer**
-   - FastAPI
-   - Stateless retrieval endpoint
-   - Deterministic answer generation
-
-3. **Advanced Retrieval**
-   - Version‑aware chunk pairing
-   - Explicit proposal vs final comparison chains
-
----
-
-## 11. Key Takeaway
-
-ReguLens is not a demo RAG.
-
-It is a **compliance‑grade retrieval and reasoning system** built with:
+It is a **compliance‑grade retrieval and reasoning pipeline** built with:
 - Intentional constraints
 - Auditable logic
-- Production‑ready architecture
+- Clear separation of ingestion, retrieval, reranking, and generation
 
-The system’s refusal to answer is a feature, not a bug.
-
+In ReguLens, refusing to answer is not a weakness — it is a core feature.
