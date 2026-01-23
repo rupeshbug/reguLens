@@ -1,96 +1,127 @@
 import json
-import hashlib
-from pathlib import Path
-from typing import List
 import uuid
+from pathlib import Path
+from tqdm import tqdm
 
-from sentence_transformers import SentenceTransformer
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct
 
+import torch
+from sentence_transformers import SentenceTransformer
+from transformers import AutoTokenizer, AutoModelForMaskedLM
+
+
+# config
 
 COLLECTION_NAME = "regulens"
-MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+CHUNKS_DIR = Path("data/chunks")
 
-BASE_DIR = Path(__file__).resolve().parents[1]
-DATA_DIR = BASE_DIR / "data"
-CHUNKS_DIR = DATA_DIR / "chunks"
+DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
+SPLADE_MODEL_ID = "naver/splade-cocondenser-ensembledistil"
+
+BATCH_SIZE = 32
 
 
-def load_chunks(path: Path) -> List[dict]:
-    with open(path, "r", encoding="utf-8") as f:
-        return json.load(f)
+# load models
 
-NAMESPACE = uuid.UUID("12345678-1234-5678-1234-567812345678")
+print("[INFO] Loading dense embedding model...")
+dense_model = SentenceTransformer(DENSE_MODEL_NAME)
 
-def stable_point_id(doc_id: str, section_id: str, chunk_index: int) -> str:
+print("[INFO] Loading SPLADE model...")
+splade_tokenizer = AutoTokenizer.from_pretrained(SPLADE_MODEL_ID)
+splade_model = AutoModelForMaskedLM.from_pretrained(SPLADE_MODEL_ID)
+splade_model.eval()
+
+# SPLADE model
+
+@torch.no_grad()
+def compute_splade_sparse_vector(text: str):
     """
-    Create a stable deterministic ID so re-upserts overwrite correctly.
+    Returns sparse vector in Qdrant format:
+    { "indices": [...], "values": [...] }
     """
-    raw = f"{doc_id}|{section_id}|{chunk_index}"
-    return str(uuid.uuid5(NAMESPACE, raw))
+    tokens = splade_tokenizer(
+        text,
+        return_tensors="pt",
+        truncation=True,
+        max_length=512
+    )
 
+    output = splade_model(**tokens)
+    logits = output.logits
 
-def ingest_chunks(chunks_file: str):
-    print(f"\n=== Ingesting {chunks_file} ===")
+    # SPLADE transformation
+    relu_log = torch.log1p(torch.relu(logits))
+    weighted = relu_log * tokens.attention_mask.unsqueeze(-1)
 
-    # Load data
-    chunks = load_chunks(CHUNKS_DIR / chunks_file)
+    # max over sequence length
+    vec, _ = torch.max(weighted, dim=1)
+    vec = vec.squeeze()
+
+    # keep only non-zero entries
+    nonzero_indices = vec.nonzero(as_tuple=False).squeeze().cpu()
+    nonzero_values = vec[nonzero_indices].cpu()
+
+    return {
+        "indices": nonzero_indices.tolist(),
+        "values": nonzero_values.tolist()
+    }
+
+# ingestion
+
+def ingest_chunks(json_file: Path):
+    print(f"\n=== Ingesting {json_file.name} ===")
+
+    with open(json_file, "r", encoding="utf-8") as f:
+        chunks = json.load(f)
+
     print(f"[INFO] Loaded {len(chunks)} chunks")
 
-    # initialize model
-    print("[INFO] Loading embedding model...")
-    model = SentenceTransformer(MODEL_NAME)
-
     client = QdrantClient(url="http://localhost:6333")
-    
-    # batch encode for speed boost
-    print(f"[EMBED] Generating embeddings for {len(chunks)} chunks...")
-    texts = [chunk["text"] for chunk in chunks]
-    
-    embeddings = model.encode(texts, batch_size = 32, show_progress_bar = True, normalize_embeddings = True)
+
+    texts = [c["text"] for c in chunks]
+
+    print("[INFO] Generating dense embeddings...")
+    dense_vectors = dense_model.encode(
+        texts,
+        batch_size = BATCH_SIZE,
+        show_progress_bar = True,
+        normalize_embeddings = True
+    )
 
     points = []
 
-    for i, chunk in enumerate(chunks):
-        point_id = stable_point_id(
-            chunk["document_id"],
-            chunk["section_id"],
-            chunk["chunk_index"]
+    print("[INFO] Generating SPLADE sparse vectors + preparing points...")
+    for chunk, dense_vec in tqdm(zip(chunks, dense_vectors), total=len(chunks)):
+        sparse_vec = compute_splade_sparse_vector(chunk["text"])
+
+        point = PointStruct(
+            id = uuid.uuid4().hex,
+            vector = {
+                "dense": dense_vec.tolist(),
+                "sparse": sparse_vec
+            },
+            payload = {
+                "document_id": chunk["document_id"],
+                "version": chunk["version"],
+                "section_id": chunk["section_id"],
+                "section_path": chunk["section_path"],
+                "title": chunk["title"],
+                "text": chunk["text"]
+            }
         )
+        points.append(point)
 
-        payload = {
-            "document_id": chunk["document_id"],
-            "version": chunk["version"],
-            "section_id": chunk["section_id"],
-            "section_path": chunk["section_path"],
-            "title": chunk["title"],
-            "chunk_index": chunk["chunk_index"],
-            "text": chunk["text"]
-        }
-
-        points.append(
-            PointStruct(
-                id = point_id,
-                vector = {"dense": embeddings[i].tolist()},
-                payload = payload
-            )
-        )
-
-    print(f"[INFO] Upserting {len(points)} points into Qdrant...")
-
+    print(f"[INFO] Upserting {len(points)} points...")
     client.upsert(
         collection_name = COLLECTION_NAME,
         points = points
     )
 
-    print("[DONE] Upsert complete.")
-
-    # validate 
-    count = client.count(collection_name=COLLECTION_NAME, exact=True)
-    print(f"[VERIFY] Collection now contains {count.count} points")
+    count = client.count(collection_name=COLLECTION_NAME).count
+    print(f"[DONE] Collection now contains {count} points")
 
 
 if __name__ == "__main__":
-    ingest_chunks("2022_proposed_chunks.json")
-    ingest_chunks("2024_final_chunks.json")
+    ingest_chunks(CHUNKS_DIR / "2022_proposed_chunks.json")
+    ingest_chunks(CHUNKS_DIR / "2024_final_chunks.json")
