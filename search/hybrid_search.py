@@ -13,9 +13,7 @@ from qdrant_client.models import Prefetch, FusionQuery, Fusion
 
 from ingest.reranker import CrossEncoderReranker
 
-# =====================
-# CONFIG
-# =====================
+# config
 
 COLLECTION_NAME = "regulens"
 
@@ -29,9 +27,7 @@ SPLADE_MODEL_ID = "naver/splade-cocondenser-ensembledistil"
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
-# =====================
-# LOAD MODELS
-# =====================
+# load models
 
 print("[INFO] Loading models...")
 
@@ -46,9 +42,8 @@ reranker = CrossEncoderReranker()
 client = QdrantClient(url="http://localhost:6333")
 
 
-# =====================
-# SPLADE QUERY ENCODER
-# =====================
+
+# SPLADE query encoder
 
 @torch.no_grad()
 def compute_splade_query(text: str):
@@ -77,33 +72,32 @@ def compute_splade_query(text: str):
     }
 
 
-# =====================
-# RERANKING
-# =====================
-
-def rerank_results(query: str, points):
-    reranker = CrossEncoderReranker()
-
-    candidates = points[:RERANK_TOP_K]
-    passages = [p.payload["text"] for p in candidates]
+# reranking
+def rerank_results(query: str, points, rerank_k: int):
+    candidates = points[:rerank_k]
+    passages = [
+        p.payload["text"]
+        for p in candidates
+        if p.payload and "text" in p.payload
+    ] 
 
     rerank_scores = reranker.rerank(query, passages)
 
     scored = list(zip(rerank_scores, candidates))
-
     scored.sort(key=lambda x: x[0], reverse=True)
 
-    return scored[:FINAL_TOP_N]
+    return [point for _, point in scored]
 
 
 
-# =====================
-# HYBRID SEARCH
-# =====================
+# hybrid search
 
-def hybrid_search(query: str):
-    print("\n[QUERY]")
-    print(query)
+def hybrid_search(
+    query: str,
+    top_k: int = TOP_K,
+    rerank_k: int = RERANK_TOP_K ,
+    return_payload: bool = True,
+):
 
     dense_query = dense_model.encode(
         query,
@@ -118,46 +112,31 @@ def hybrid_search(query: str):
             Prefetch(
                 using="dense",
                 query=dense_query,
-                limit=TOP_K,
+                limit=top_k,
             ),
             Prefetch(
                 using="sparse",
                 query=sparse_query,
-                limit=TOP_K,
+                limit=top_k,
             ),
         ],
-        query=FusionQuery(fusion=Fusion.RRF),
-        limit=TOP_K,
+        query = FusionQuery(fusion=Fusion.RRF),
+        limit = top_k,
     )
 
-    print("\n[HYBRID RESULTS]\n")
-    for rank, point in enumerate(response.points, start=1):
-        print(f"{rank}. score={point.score:.4f}")
+    if not response.points:
+        return []
 
-    # apply reranking
-    final_points = rerank_results(query, response.points)
+    reranked = rerank_results(query, response.points, rerank_k)
 
-    print("\n[RERANKED RESULTS]\n")
-
-    for rank, (rerank_score, point) in enumerate(final_points, start=1):
-        payload = point.payload
-
-        print(f"--- Rank {rank} | rerank_score={rerank_score:.4f} ---")
-        print(f"Doc: {payload['document_id']} ({payload['version']})")
-        print(f"Section: {payload['section_id']} | {payload['title']}")
-        print("Text preview:")
-        print(payload["text"][:500])
-        print()
-
-    return final_points
+    return reranked[:FINAL_TOP_N]
 
 
-# =====================
-# ENTRY POINT
-# =====================
+# entry point
 
 if __name__ == "__main__":
     hybrid_search(
         "Why does the SEC believe additional climate-related disclosure "
         "requirements are necessary for investors?"
     )
+    
