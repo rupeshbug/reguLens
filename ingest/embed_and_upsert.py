@@ -1,7 +1,9 @@
+import os
 import json
 import uuid
 from pathlib import Path
 from tqdm import tqdm
+from dotenv import load_dotenv
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct
@@ -10,6 +12,7 @@ import torch
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 
+load_dotenv()
 
 # config
 
@@ -20,6 +23,7 @@ DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 SPLADE_MODEL_ID = "naver/splade-cocondenser-ensembledistil"
 
 BATCH_SIZE = 32
+UPSERT_BATCH_SIZE = 64
 
 
 # load models
@@ -77,7 +81,10 @@ def ingest_chunks(json_file: Path):
 
     print(f"[INFO] Loaded {len(chunks)} chunks")
 
-    client = QdrantClient(url="http://localhost:6333")
+    client = QdrantClient(
+        url = os.getenv("QDRANT_URL"),
+        api_key = os.getenv("QDRANT_API_KEY")
+    )
 
     texts = [c["text"] for c in chunks]
 
@@ -113,10 +120,15 @@ def ingest_chunks(json_file: Path):
         points.append(point)
 
     print(f"[INFO] Upserting {len(points)} points...")
-    client.upsert(
-        collection_name = COLLECTION_NAME,
-        points = points
-    )
+    for i in range(0, len(points), UPSERT_BATCH_SIZE):
+        batch = points[i : i + UPSERT_BATCH_SIZE]
+
+        client.upsert(
+            collection_name = COLLECTION_NAME,
+            points = batch,
+        )
+
+        print(f"  → Upserted {i + len(batch)} / {len(points)} points")
 
     count = client.count(collection_name=COLLECTION_NAME).count
     print(f"[DONE] Collection now contains {count} points")

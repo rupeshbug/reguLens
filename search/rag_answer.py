@@ -14,11 +14,10 @@ from search.global_rerank import global_rerank
 
 from search.runtime import get_decomposer, get_llm_client
 
-from dotenv import load_dotenv
-
 
 MODEL_NAME = "llama-3.3-70b-versatile"
 
+load_dotenv()
 
 # prompt template
 

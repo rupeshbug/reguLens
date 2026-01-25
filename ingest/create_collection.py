@@ -1,3 +1,4 @@
+import os
 from qdrant_client import QdrantClient
 from qdrant_client.models import (
     VectorParams,
@@ -6,10 +7,13 @@ from qdrant_client.models import (
     HnswConfigDiff,
     PayloadSchemaType
 )
+from dotenv import load_dotenv
+
+load_dotenv()
 
 COLLECTION_NAME = "regulens"
 
-client = QdrantClient(url="http://localhost:6333")
+client = QdrantClient(url=os.getenv("QDRANT_URL"), api_key=os.getenv("QDRANT_API_KEY"))
 
 def create_collection():
     # Delete if exists (safe for local dev)
