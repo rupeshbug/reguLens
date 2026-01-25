@@ -113,7 +113,6 @@ def answer_query(
             query=q,
             top_k=top_k,
             rerank_k=rerank_k,
-            return_payload=True,
             version_filter=version_filter
         )
         all_results.extend(retrieved)
