@@ -10,18 +10,12 @@ from dotenv import load_dotenv
 from groq import Groq
 
 from search.hybrid_search import hybrid_search
-from search.query_decomposition import QueryDecomposer
 from search.global_rerank import global_rerank
+
+from search.runtime import get_decomposer, get_llm_client
 
 from dotenv import load_dotenv
 
-decomposer = QueryDecomposer()
-
-
-# model initialization using Groq
-client = Groq(
-    api_key = os.getenv("GROQ_API_KEY")
-)
 
 MODEL_NAME = "llama-3.3-70b-versatile"
 
@@ -108,7 +102,7 @@ def answer_query(
     queries = [query]
 
     if decompose:
-        
+        decomposer = get_decomposer()
         queries = decomposer.decompose(query)
 
     # run retrieval for each sub-query
@@ -184,10 +178,12 @@ def answer_query(
     user_prompt = build_user_prompt(query, contexts)
 
     # Call Groq LLM
+    client = get_llm_client()
+    
     completion = client.chat.completions.create(
-        model=MODEL_NAME,
-        temperature=0.2,
-        messages=[
+        model = MODEL_NAME,
+        temperature = 0.2,
+        messages = [
             {"role": "system", "content": SYSTEM_PROMPT},
             {"role": "user", "content": user_prompt}
         ]
@@ -199,34 +195,5 @@ def answer_query(
     return {
         "answer": answer,
         "sources": sources
-    }
-
-
-# testing
-if __name__ == "__main__":
-    query = (
-        "What are the specific changes in the 2024 version from the previous one? Answer in a single paragraph."
-    )
-
-    # response1 = answer_query(query)
-    # response2 = answer_query(query, version_filter="2024_final")
-    # response3 = answer_query(query, version_filter="2022_proposed")
-    response1 = answer_query(query, decompose=False, global_rerank_enabled=False)
-    response2 = answer_query(query, decompose=True, global_rerank_enabled=True)
-
-    print("\n[ANSWER 1]\n")
-    print(response1["answer"])
-    print("\n[SOURCES]\n")
-    for s1 in response1["sources"]:
-        print(
-            f"- {s1['doc']} ({s1['version']}) | Section: {s1['section']}"
-        )
-    
-    print("\n[ANSWER 2]\n")
-    print(response2["answer"])
-    print("\n[SOURCES]\n")
-    for s2 in response2["sources"]:
-        print(
-            f"- {s2['doc']} ({s2['version']}) | Section: {s2['section']}"
-        )   
+    }  
     

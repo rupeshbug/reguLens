@@ -1,17 +1,15 @@
-import sys
-import os
-
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.append(PROJECT_ROOT)
-
 import torch
-from sentence_transformers import SentenceTransformer
-from transformers import AutoTokenizer, AutoModelForMaskedLM
 
-from qdrant_client import QdrantClient
 from qdrant_client.models import Prefetch, FusionQuery, Fusion, Filter, FieldCondition, MatchValue
 
 from ingest.reranker import CrossEncoderReranker
+
+from search.runtime import (
+    get_dense_model,
+    get_splade,
+    get_qdrant,
+    get_cross_encoder_reranker
+)
 
 # config
 
@@ -24,37 +22,22 @@ FINAL_TOP_N = 3       # final context chunks
 DENSE_MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 SPLADE_MODEL_ID = "naver/splade-cocondenser-ensembledistil"
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-
-
-# load models
-
-print("[INFO] Loading models...")
-
-dense_model = SentenceTransformer(DENSE_MODEL_NAME, device=DEVICE)
-
-splade_tokenizer = AutoTokenizer.from_pretrained(SPLADE_MODEL_ID)
-splade_model = AutoModelForMaskedLM.from_pretrained(SPLADE_MODEL_ID).to(DEVICE)
-splade_model.eval()
-
-reranker = CrossEncoderReranker()  
-
-client = QdrantClient(url="http://localhost:6333")
-
-
 
 # SPLADE query encoder
 
 @torch.no_grad()
 def compute_splade_query(text: str):
-    tokens = splade_tokenizer(
+    
+    tokenizer, model, device = get_splade()
+     
+    tokens = tokenizer(
         text,
         return_tensors="pt",
         truncation=True,
         max_length=512
-    ).to(DEVICE)
+    ).to(device)
 
-    output = splade_model(**tokens)
+    output = model(**tokens)
     logits = output.logits
 
     relu_log = torch.log1p(torch.relu(logits))
@@ -74,6 +57,8 @@ def compute_splade_query(text: str):
 
 # reranking
 def rerank_results(query: str, points, rerank_k: int):
+    reranker = get_cross_encoder_reranker()
+    
     candidates = points[:rerank_k]
     passages = [
         p.payload["text"]
@@ -96,9 +81,10 @@ def hybrid_search(
     query: str,
     top_k: int = TOP_K,
     rerank_k: int = RERANK_TOP_K ,
-    return_payload: bool = True,
     version_filter: str | None = None
 ):
+    dense_model = get_dense_model()
+    client = get_qdrant()
     
     qdrant_filter = None
 
@@ -145,13 +131,4 @@ def hybrid_search(
     reranked = rerank_results(query, response.points, rerank_k)
 
     return reranked[:FINAL_TOP_N]
-
-
-# entry point
-
-if __name__ == "__main__":
-    hybrid_search(
-        "Why does the SEC believe additional climate-related disclosure "
-        "requirements are necessary for investors?"
-    )
     

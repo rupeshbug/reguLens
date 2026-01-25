@@ -1,7 +1,5 @@
 from typing import List
-from ingest.reranker import CrossEncoderReranker
-
-reranker = CrossEncoderReranker()
+from search.runtime import get_cross_encoder_reranker
 
 
 def global_rerank(query: str, candidates: List, top_k: int = 8):
@@ -11,6 +9,8 @@ def global_rerank(query: str, candidates: List, top_k: int = 8):
 
     if not candidates:
         return []
+    
+    reranker = get_cross_encoder_reranker()
 
     passages = [c.payload.get("text", "") for c in candidates]
 
