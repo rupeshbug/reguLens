@@ -23,7 +23,7 @@ def disclosure_analysis(req: DisclosureRequest):
     """
     return answer_regulatory_question(
         query = req.query,
-        version=req.version
+        version = req.version
     )
     
 @app.get("/health")
