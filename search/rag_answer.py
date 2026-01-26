@@ -87,8 +87,8 @@ def build_user_prompt(query: str, contexts: List[Dict]) -> str:
 # main rag function
 def answer_query(
     query: str,
-    top_k: int = 10,
-    rerank_k: int = 3,
+    top_k: int = 8,
+    rerank_k: int = 2,
     version_filter: str | None = None,
     decompose: bool = True,
     global_rerank_enabled: bool = True
@@ -134,7 +134,7 @@ def answer_query(
         results = global_rerank(
             query=query,          
             candidates=results,
-            top_k=8              
+            top_k=5              
         )    
 
     # prepare context for prompt
