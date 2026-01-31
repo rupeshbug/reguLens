@@ -2,7 +2,6 @@
 from functools import lru_cache
 import os
 from groq import Groq
-import torch
 from sentence_transformers import SentenceTransformer
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from qdrant_client import QdrantClient
