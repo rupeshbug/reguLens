@@ -1,6 +1,6 @@
 # ReguLens
 
-ReguLens is a retrieval-augmented generation (RAG) system focused on U.S. SEC Climate‑Related Disclosure rules. It is designed to answer regulatory and investor‑facing questions using **only** official SEC source documents, with strong focus to prevent hallucination.
+ReguLens is a retrieval-augmented generation (RAG) system focused on U.S. SEC Climate‑Related Disclosure rules. It is designed to answer regulatory and investor-facing questions using only official SEC source documents, with a strong emphasis on grounding, traceability, and hallucination prevention.
 
 A core capability of ReguLens is its ability to analyze, explain, and contrast different versions of the same regulation, with particular emphasis on comparing:
 - The **2022 SEC Climate‑Related Disclosure Proposed Rule**
@@ -12,74 +12,142 @@ The system prioritizes accuracy, traceability, and compliance-safe reasoning, wi
 
 ## What ReguLens Does
 
-- Retrieves relevant regulatory passages using **hybrid search** (dense + sparse)
-- Leverages version-aware metadata (document, year, section) for precise filtering
-- Reranks results using a **cross‑encoder** for semantic precision
-- Generates answers using a large language model constrained by retrieved context
+- Retrieves relevant regulatory passages using **metadata-aware vector search**
+- Supports **version-filtered retrieval** (2022 vs 2024)
+- Generates answers strictly grounded in retrieved SEC text
 - Prefers **final rules over proposed rules** when both are available
-- Explicitly refuses to answer when context is insufficient
+- Explicitly avoids external knowledge or unsupported interpretation
+- Returns structured source metadata (document, version, section)
 
-This allows ReguLens to support:
+ReguLens is suitable for:
 
-- Regulatory interpretation
-- Comparison between proposed and finalized rules
-- Compliance and legal research
-- Investor-facing explanations grounded in official disclosures
+- Regulatory interpretation and compliance analysis  
+- Comparison between proposed and finalized SEC rules  
+- Investor-facing regulatory explanations  
+- Legal and policy research workflows  
+
+---
+
+## Retrieval Architecture Overview
+
+ReguLens implements **two retrieval paths**, intentionally separated to balance **latency, cost, and retrieval quality**.
+
+---
+
+### 1. Fast Retrieval Path (Production Default)
+
+Used in the deployed API on free-tier infrastructure.
+
+- **Dense-only semantic retrieval**
+- Sentence-Transformer embeddings
+- Metadata-based filtering (rule version, section)
+- No sparse retrieval, no cross-encoder reranking
+- Optimized for low latency and API responsiveness
+
+This configuration ensures:
+- Stable performance under strict timeout limits
+- Predictable latency for real-time API usage
+- Safe deployment on free-tier hosting (e.g. Render)
+
+---
+
+### 2. Full Retrieval Path (Offline / Evaluation)
+
+Used for experiments, ablations, and retrieval quality validation.
+
+- **Hybrid retrieval** (dense + sparse)
+- SPLADE sparse vectors for lexical precision
+- Reciprocal Rank Fusion (RRF)
+- Cross-encoder reranking for semantic refinement
+- Query decomposition for improved recall
+
+This configuration prioritizes **retrieval quality over latency** and is intentionally **not used in the production API** due to computational cost.
 
 ---
 
 ## Key Capabilities
 
-- **Hybrid Retrieval**: Combines dense semantic embeddings with sparse lexical matching to capture both meaning and exact regulatory language.
-- **Chunk-Based Indexing**: SEC documents are chunked into semantically coherent sections to improve retrieval precision and reduce noise.
-- **Metadata-Aware Search**: Each chunk is stored with structured metadata (document version, section, title), enabling fast filtering and version-sensitive retrieval.
-- **RRF Fusion**: Reciprocal Rank Fusion (RRF) merges multiple retrieval signals into a robust candidate set.
-- **Cross‑Encoder Reranking**: A transformer-based reranker refines results to ensure the most contextually relevant passages are used for generation.
-- **Strict Grounding**: No external knowledge or assumptions
-- **Source Awareness**: Tracks document version and section metadata
+- **Version-Aware Retrieval**  
+  Every chunk is indexed with document version, section, and title metadata, enabling strict version filtering and comparison.
+
+- **Chunk-Based Indexing**  
+  Regulatory text is chunked into semantically coherent units to balance retrieval precision and contextual completeness.
+
+- **Hybrid Retrieval (Evaluation Mode)**  
+  Dense embeddings capture semantic similarity, while sparse vectors preserve exact regulatory phrasing.
+
+- **RRF Fusion**  
+  Reciprocal Rank Fusion combines multiple retrieval signals into a robust candidate set.
+
+- **Cross-Encoder Reranking (Evaluation Mode)**  
+  A transformer-based reranker refines candidate passages to maximize contextual relevance.
+
+- **Strict Grounding**  
+  The language model is constrained to retrieved SEC text only. External knowledge is explicitly disallowed.
+
+- **Source Awareness**  
+  Every answer includes document, version, and section metadata for traceability.
 
 ---
 
-## Models Used
+## Models and Infrastructure
 
-- Dense embeddings: `sentence-transformers/all-MiniLM-L6-v2`
-- Sparse retrieval: `naver/splade-cocondenser-ensembledistil`
-- Reranker: Sentence‑Transformers cross‑encoder
-- Vector database: Qdrant
-- LLM: Groq‑hosted `llama‑3.3‑70b‑versatile`
+- **Dense embeddings**: `sentence-transformers/all-MiniLM-L6-v2`
+- **Sparse retrieval (evaluation)**: `naver/splade-cocondenser-ensembledistil`
+- **Reranker (evaluation)**: Sentence-Transformers cross-encoder
+- **Vector database**: Qdrant
+- **LLM**: Groq-hosted `llama-3.3-70b-versatile`
+- **API framework**: FastAPI
 
 ---
 
 ## Retrieval Ablation and Validation
 
-ReguLens includes a simple but effective ablation test to validate metadata-aware retrieval and version control.
+ReguLens includes a simple but effective ablation test to validate **metadata-aware retrieval and version control**.
 
-The same regulatory question is executed under three retrieval settings:
+The same regulatory question is executed under three settings:
 
 1. No version filter (mixed retrieval)
 2. Retrieval restricted to the 2024 Final Rule
 3. Retrieval restricted to the 2022 Proposed Rule
 
-Results show that:
+Observed behavior:
 
-- Unfiltered retrieval produces blended answers drawing from both rule versions
-- Version-filtered retrieval strictly limits sources and generated answers to the selected rule
-- The 2024-only response reflects finalized regulatory intent
-- The 2022-only response captures proposal-stage rationale and investor protection arguments
+- Unfiltered retrieval produces blended answers spanning both rule versions
+- Version-filtered retrieval strictly limits both sources and generated answers
+- 2024-only responses reflect finalized regulatory intent
+- 2022-only responses capture proposal-stage rationale and investor-protection arguments
 
-This confirms that document metadata (version, section) is actively used during retrieval and materially affects downstream generation, validating ReguLens’ version-aware RAG design.
+This confirms that document metadata is actively used during retrieval and materially influences downstream generation.
+
+---
 
 ### Query Decomposition Ablation
 
 ReguLens also evaluates the impact of query decomposition on retrieval quality.
 
-The same regulatory question is executed with:
+The same question is executed with:
+
 - Query decomposition disabled (single query)
 - Query decomposition enabled (LLM-generated sub-questions)
 
-Observed behavior:
-- Without decomposition, answers may be conservative or incomplete when relevant information is distributed across sections or rule versions
-- With decomposition enabled, ReguLens retrieves a broader but still grounded set of regulatory passages
-- A final global reranking step ensures results remain aligned with the original user intent
+Results:
 
-This validates that query decomposition improves recall without compromising grounding, while global reranking preserves regulatory precision.
+- Without decomposition, answers may be conservative or incomplete when relevant information is distributed across sections
+- With decomposition enabled, retrieval recall improves while remaining grounded
+- A global reranking step ensures alignment with the original user intent
+
+This validates that query decomposition improves recall **without compromising regulatory precision**.
+
+---
+
+## Design Philosophy
+
+ReguLens is intentionally **not a generic chatbot**.
+
+It is designed as:
+- A **controlled regulatory reasoning system**
+- A demonstration of **production-aware RAG design**
+- A balance between **retrieval quality and real-world deployment constraints**
+
+The separation between **fast production retrieval** and **full evaluation retrieval** reflects real industry trade-offs rather than idealized architectures.
