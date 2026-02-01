@@ -42,7 +42,7 @@ export default function Home() {
 
     try {
       const res = await fetch(
-        "https://regulens-2q8t.onrender.com/disclosure-analysis",
+        `${process.env.NEXT_PUBLIC_API_URL}/disclosure-analysis`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
