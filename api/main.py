@@ -16,7 +16,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
-        "https://sec-policy-lens.vercel.app/",
+        "https://sec-policy-lens.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],
