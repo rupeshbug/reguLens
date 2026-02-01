@@ -1,8 +1,8 @@
-# ReguLens
+# SECPolicyLens
 
-ReguLens is a retrieval-augmented generation (RAG) system focused on U.S. SEC Climate‑Related Disclosure rules. It is designed to answer regulatory and investor-facing questions using only official SEC source documents, with a strong emphasis on grounding, traceability, and hallucination prevention.
+SECPolicyLens is a retrieval-augmented generation (RAG) system focused on U.S. SEC Climate‑Related Disclosure rules. It is designed to answer regulatory and investor-facing questions using only official SEC source documents, with a strong emphasis on grounding, traceability, and hallucination prevention.
 
-A core capability of ReguLens is its ability to analyze, explain, and contrast different versions of the same regulation, with particular emphasis on comparing:
+A core capability of SECPolicyLens is its ability to analyze, explain, and contrast different versions of the same regulation, with particular emphasis on comparing:
 - The **2022 SEC Climate‑Related Disclosure Proposed Rule**
 - The **2024 SEC Climate‑Related Disclosure Final Rule**
 
@@ -10,7 +10,7 @@ The system prioritizes accuracy, traceability, and compliance-safe reasoning, wi
 
 ---
 
-## What ReguLens Does
+## What SECPolicyLens Does
 
 - Retrieves relevant regulatory passages using **metadata-aware vector search**
 - Supports **version-filtered retrieval** (2022 vs 2024)
@@ -19,7 +19,7 @@ The system prioritizes accuracy, traceability, and compliance-safe reasoning, wi
 - Explicitly avoids external knowledge or unsupported interpretation
 - Returns structured source metadata (document, version, section)
 
-ReguLens is suitable for:
+SECPolicyLens is suitable for:
 
 - Regulatory interpretation and compliance analysis  
 - Comparison between proposed and finalized SEC rules  
@@ -30,7 +30,7 @@ ReguLens is suitable for:
 
 ## Retrieval Architecture Overview
 
-ReguLens implements **two retrieval paths**, intentionally separated to balance **latency, cost, and retrieval quality**.
+SECPolicyLens implements **two retrieval paths**, intentionally separated to balance **latency, cost, and retrieval quality**.
 
 ---
 
@@ -103,7 +103,7 @@ This configuration prioritizes **retrieval quality over latency** and is intenti
 
 ## Retrieval Ablation and Validation
 
-ReguLens includes a simple but effective ablation test to validate **metadata-aware retrieval and version control**.
+SECPolicyLens includes a simple but effective ablation test to validate **metadata-aware retrieval and version control**.
 
 The same regulatory question is executed under three settings:
 
@@ -124,7 +124,7 @@ This confirms that document metadata is actively used during retrieval and mater
 
 ### Query Decomposition Ablation
 
-ReguLens also evaluates the impact of query decomposition on retrieval quality.
+SECPolicyLens also evaluates the impact of query decomposition on retrieval quality.
 
 The same question is executed with:
 
@@ -143,7 +143,7 @@ This validates that query decomposition improves recall **without compromising r
 
 ## Design Philosophy
 
-ReguLens is intentionally **not a generic chatbot**.
+SECPolicyLens is intentionally **not a generic chatbot**.
 
 It is designed as:
 - A **controlled regulatory reasoning system**
