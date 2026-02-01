@@ -36,7 +36,7 @@ export default function Home() {
 
     try {
       const res = await fetch(
-        "https://regulens-hekl.onrender.com/disclosure-analysis",
+        "https://regulens-2q8t.onrender.com/disclosure-analysis",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -123,7 +123,7 @@ export default function Home() {
         )}
 
         {/* Chat Messages */}
-        <div className="space-y-4 mb-6 min-h-[200px]">
+        <div className="space-y-4 mb-6 min-h-50">
           {messages.map((msg, i) => (
             <div key={i} className="animate-fadeIn">
               <div
@@ -135,10 +135,10 @@ export default function Home() {
               >
                 <div className="flex items-start gap-3">
                   <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                    className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                       msg.role === "user"
                         ? "bg-blue-600 text-white"
-                        : "bg-gradient-to-br from-cyan-500 to-blue-500 text-white"
+                        : "bg-linear-to-br from-cyan-500 to-blue-500 text-white"
                     }`}
                   >
                     {msg.role === "user" ? "You" : "AI"}
@@ -152,7 +152,7 @@ export default function Home() {
               {/* Sources */}
               {msg.sources && msg.sources.length > 0 && (
                 <div className="mt-3 ml-11 mr-8 bg-[#141414] rounded-lg p-4 border border-gray-800">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-2">
+                  <p className="text-sm font-semibold text-gray-400 uppercase tracking-wide mb-2">
                     Sources
                   </p>
                   <ul className="space-y-2">
@@ -161,7 +161,7 @@ export default function Home() {
                         key={idx}
                         className="text-sm text-gray-400 flex items-start gap-2"
                       >
-                        <span className="text-cyan-400 flex-shrink-0">→</span>
+                        <span className="text-cyan-400 shrink-0">→</span>
                         <span>
                           <span className="text-gray-300 font-medium">
                             {s.doc}
