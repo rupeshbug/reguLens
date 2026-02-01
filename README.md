@@ -1,4 +1,5 @@
 # SECPolicyLens
+> Built as a portfolio project to demonstrate production-aware RAG system design for regulatory and policy analysis.
 
 SECPolicyLens is a retrieval-augmented generation (RAG) system focused on U.S. SEC Climate‑Related Disclosure rules. It is designed to answer regulatory and investor-facing questions using only official SEC source documents, with a strong emphasis on grounding, traceability, and hallucination prevention.
 
